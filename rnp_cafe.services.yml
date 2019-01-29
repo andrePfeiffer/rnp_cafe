@@ -1,3 +1,15 @@
+parameters:
+  rnp_cafe.use_key_value_cache: true
 services:
     rnp_cafe.roar_generator:
       class: Drupal\rnp_cafe\cafe\RoarGenerator
+      arguments:
+        - '@keyvalue'
+        - '@logger.factory'
+        - '%rnp_cafe.use_key_value_cache%'
+    rnp_cafe.cafe_Listener:
+      class: Drupal\rnp_cafe\cafe\CafeListener
+      arguments: []
+      tags:
+        - { name: event_subscriber }
+        

@@ -6,20 +6,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\rnp_cafe\cafe\RoarGenerator;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Logger\
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
 class HelloWorld extends ControllerBase
 {
     private $roarGenerator;
     private $loggerFactoryService;
 
-    public function __construct (RoarGenerator $roarGenerator, LoggerChannelFactoryInterface $loggerFactory)
+    public function __construct (RoarGenerator $roarGenerator, LoggerChannelFactoryInterface $loggerFactoryervice)
     {
         $this->roarGenerator = $roarGenerator;
+        $this->loggerFactoryService = $loggerFactoryervice;
     }
     public function ola($count)
     {
         $saida = $this->roarGenerator->getRoar($count);
+        $this->loggerFactoryService->get('default')->debug($saida);
         return new Response($saida);
     }
 

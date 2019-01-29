@@ -1,0 +1,95 @@
+<?php
+/**
+ * @file
+ * Code for the RNP CAFe feature.
+ */
+
+include_once 'rnp_cafe.features.inc';
+
+/**
+ * Implements template_preprocess_page().
+ */
+function rnp_cafe_preprocess_page(&$variables) {
+  if (!user_is_logged_in()) {
+    if($_GET['q'] == 'user/login' || $_GET['q'] == 'user') {
+      $variables['theme_hook_suggestions'][] = 'page__rnp_cafe__user_login';
+    }
+
+    if($_GET['q'] == 'user/password') {
+      $variables['theme_hook_suggestions'][] = 'page__rnp_cafe__user_pass';
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function rnp_cafe_menu_alter(&$items) {
+  $items['user/password']['access callback'] = '_rnp_cafe_access_callback';
+  $items['user/reset/%/%/%']['access callback'] = '_rnp_cafe_access_callback';
+  $items['user/%user/edit']['access callback'] = '_rnp_cafe_access_callback';
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function rnp_cafe_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'user_pass':
+    case 'user_login':
+    case 'user_login_block':
+      $form['#validate'][] = '_rnp_cafe_check_federated_user';
+      break;
+  }
+}
+
+/**
+ * Access callback.
+ */
+function _rnp_cafe_access_callback($user = NULL) {
+  if (user_access('administer users')) {
+    return TRUE;
+  }
+
+  if (!$user || empty($user)) {
+    global $user;
+  }
+
+  if (_rnp_cafe_check_user_roles($user, 22)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Custom validate handler that protects user's forms.
+ */
+function _rnp_cafe_check_federated_user($form, &$form_state) {
+  $value = $form_state['values']['name'];
+  $col = valid_email_address($value) ? 'mail' : 'name';
+
+  $uid = db_select('users', 'u')
+    ->fields('u', array('uid'))
+    ->condition($col, $value)
+    ->execute()->fetchField();
+
+  if ($uid) {
+    $user = user_load($uid);
+
+    if (_rnp_cafe_check_user_roles($user, 22)) {
+      form_set_error('name', t('This user can only login through CAFe.'));
+    }
+  }
+}
+
+/**
+ * Helper function to check if user has a role.
+ */
+function _rnp_cafe_check_user_roles($user, $role) {
+  if ($user->uid && in_array($role, array_keys($user->roles))) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
