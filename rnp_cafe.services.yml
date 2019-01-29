@@ -1,0 +1,3 @@
+services:
+    rnp_cafe.roar_generator:
+      class: Drupal\rnp_cafe\cafe\RoarGenerator

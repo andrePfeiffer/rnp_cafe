@@ -1,0 +1,8 @@
+name: 'RNP CAFe'
+description: 'Implementação de autenticação via CAFe'
+type: module
+core: 8.x
+package: RNP
+project: rnp_cafe
+version: 8.x-1.x-dev
+
