@@ -9,8 +9,8 @@ class CafeListener implements EventSubscriberInterface
 {
     public function onKernelRequest(GetResponseEvent $event)
     {
-        $request = $event->getRequest();
-        var_dump($event); die;
+        //echo "I'm a human";
+
     }
 
 
