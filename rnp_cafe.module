@@ -1,0 +1,31 @@
+<?php
+
+
+function rnp_cafe_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  $variables['logged_in'] = (\Drupal::currentUser()->isAnonymous())?false:true;
+  $current_uri = \Drupal::service('path.current')->getPath();
+  if(!$variables['logged_in']){
+    if($current_uri === '/user/login'){
+      $suggestions[] = 'page__rnp_cafe__user_login';
+    }
+  }
+}
+
+
+function rnp_cafe_theme($existing, $type, $theme, $path) {
+  return [
+    'page__rnp_cafe__user_login' => [
+      'template' => 'page--rnp-cafe--user-login',
+      'base hook' => 'page',
+    ],
+//    'shib_auth_form_form' => [
+//      'render element' => 'form',
+//    ],
+  ];
+}
+
+function rnp_cafe_preprocess_page(&$variables) {
+  $variables['form'] = \Drupal::formBuilder()->getForm(\Drupal\shib_auth_form\Form\ShibAuthForm::class);
+
+}
+

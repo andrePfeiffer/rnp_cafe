@@ -1,6 +1,0 @@
-dino_says:
-  path: /ola/mundo/{count}
-  defaults:
-    _controller: Drupal\rnp_cafe\Controller\HelloWorld::ola
-  requirements:
-    _permission: 'access content'

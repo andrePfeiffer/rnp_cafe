@@ -7,3 +7,4 @@ project: rnp_cafe
 version: 8.x-1.x-dev
 dependencies:
   - Shibboleth:shib_auth
+  - Shibboleth:shib_auth_form
